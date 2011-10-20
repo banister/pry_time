@@ -16,7 +16,7 @@ CLEAN.include("ext/**/*.log", "ext/**/*.o",
 
 def apply_spec_defaults(s)
   s.name = PROJECT_NAME
-  s.summary = "FIX ME"
+  s.summary = "A Pry-based error console."
   s.version = CLASS_NAME::VERSION
   s.date = Time.now.strftime '%Y-%m-%d'
   s.author = "John Mair (banisterfiend)"
