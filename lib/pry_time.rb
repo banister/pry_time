@@ -11,7 +11,12 @@ module PryTime
       Thread.current[:__pry_exception_bindings__].shift
       current_binding = Thread.current[:__pry_exception_bindings__].first
 
-      output.puts "Can't locate source for eval'd code" if current_binding.eval("__FILE__") == "(eval)"
+      if current_binding
+        output.puts "Can't locate source for eval'd code" if current_binding.eval("__FILE__") == "(eval)"
+        current_binding.pry
+      else
+        output.puts "Reached end of stacktrace, go back down the stack by pressing ^D"
+      end
     end
 
     command "bt", "Show the full backtrace for the current exception" do
@@ -32,7 +37,7 @@ class Object
     Thread.current[:__pry_exception_bindings__] = []
     Thread.current[:__pry_current_exception__]  = e
 
-    i = 1
+    i = 2
     loop do
       begin
         Thread.current[:__pry_exception_bindings__] <<  binding.of_caller(i)
@@ -46,6 +51,5 @@ class Object
     Thread.current[:__pry_exception_bindings__].first.pry
   end
 end
-
 
 Pry.commands.import PryTime::PryTimeCommands
