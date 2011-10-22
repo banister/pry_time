@@ -1,0 +1,17 @@
+#!/usr/bin/env ruby
+
+# (C) John Mair (banisterfiend)
+# MIT license
+
+$0 = 'pry_time'
+
+begin
+  require 'pry_time'
+rescue LoadError
+  require 'rubygems'
+  require 'pry_time'
+end
+
+PryTime.wrap do
+  require ARGV[0]
+end

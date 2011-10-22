@@ -6,6 +6,17 @@ require 'binding_of_caller'
 require 'pry'
 
 module PryTime
+  def self.wrap
+    begin
+      yield
+    rescue Exception => e
+      Thread.current[:__pry_current_exception__] = e
+      Thread.current[:__pry_exception_bindings__].first.pry
+    end
+  end
+end
+
+module PryTime
   PryTimeCommands = Pry::CommandSet.new do
     command "up", "Go up to the caller's context" do
       Thread.current[:__pry_exception_bindings__].shift
@@ -22,20 +33,28 @@ module PryTime
     command "bt", "Show the full backtrace for the current exception" do
       output.puts Thread.current[:__pry_current_exception__].backtrace
     end
+
+    command "continue", "Continue the program." do
+      Thread.current[:__pry_current_exception__].continue
+    end
   end
 end
 
+class Exception
+  NoContinuation = Class.new(StandardError)
+
+  attr_accessor :continuation
+
+  def continue
+    raise NoContinuation unless continuation.respond_to?(:call)
+    continuation.call
+  end
+end
+
+
 class Object
-  def raise(*args)
-    begin
-      Kernel.method(:raise).call(*args)
-    rescue Exception => e
-    end
-
-    puts "Starting Pry session in context of exception: #{e.class}: #{e.message}"
-
+  def raise(exception = RuntimeError, string = nil, array = caller)
     Thread.current[:__pry_exception_bindings__] = []
-    Thread.current[:__pry_current_exception__]  = e
 
     i = 2
     loop do
@@ -48,7 +67,17 @@ class Object
       i += 1
     end
 
-    Thread.current[:__pry_exception_bindings__].first.pry
+    if exception.is_a?(String)
+      string = exception
+      exception = RuntimeError
+    end
+
+    callcc do |cc|
+      obj = exception.exception(string)
+      obj.set_backtrace(array)
+      obj.continuation = cc
+      super obj
+    end
   end
 end
 
