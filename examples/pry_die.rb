@@ -21,7 +21,7 @@ def c
   1.times { |;k|
     1.times {
       v = 20
-      raise "true love's kiss"
+      raise RuntimeError, "true love's kiss"
     }
   }
 end

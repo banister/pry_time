@@ -3,6 +3,7 @@
 
 require "pry_time/version"
 require 'binding_of_caller'
+require "continuation"
 require 'pry'
 
 module PryTime
