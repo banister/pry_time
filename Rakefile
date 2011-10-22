@@ -29,7 +29,7 @@ def apply_spec_defaults(s)
   s.homepage = "http://github.com/banister/#{PROJECT_NAME}"
   s.executables = ["pry_time"]
   s.has_rdoc = 'yard'
-  s.files = `git ls-files`.s?
+  s.files = `git ls-files`
   plit("\n")
   s.test_files = `git ls-files -- test/*`.split("\n")
 end
