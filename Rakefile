@@ -1,5 +1,7 @@
 $:.unshift 'lib'
 
+direc = File.expand_path(File.dirname(__FILE__))
+
 PROJECT_NAME = "pry_time"
 
 require "#{PROJECT_NAME}/version"
@@ -36,6 +38,18 @@ end
 desc "Run tests"
 task :test do
   sh "bacon -Itest -rubygems test.rb -q"
+end
+
+desc "reinstall the gem locally for testing"
+task :reinstall do
+  sh "rake gems"
+  sh "gem uninstall pry_time"
+  sh "gem install #{direc}/pkg/pry_time-#{PryTime::VERSION}.gem"
+end
+
+desc "Run example"
+task :example do
+  load "#{direc}/examples/pry_die.rb"
 end
 
 namespace :ruby do
