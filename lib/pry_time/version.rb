@@ -1,3 +1,3 @@
 module PryTime
-  VERSION = "0.2.1pre1"
+  VERSION = "0.2.1pre2"
 end

@@ -18,12 +18,13 @@ end
 def c
   i = :boastie
   u = :pig
-  1.times { |;k|
+  1.times { |k|
     1.times {
       v = 20
       raise RuntimeError, "true love's kiss"
     }
   }
+  puts "midnight, beauty, vision, dies."
 end
 
 class Boast
