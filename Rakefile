@@ -49,7 +49,7 @@ end
 
 desc "Run example"
 task :example do
-  load "#{direc}/examples/pry_die.rb"
+  sh "ruby -I#{direc}/lib/ #{direc}/bin/pry_time #{direc}/examples/pry_die.rb"
 end
 
 namespace :ruby do

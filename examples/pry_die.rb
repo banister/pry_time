@@ -1,3 +1,9 @@
+unless Object.const_defined? :PryTime
+  $:.unshift File.expand_path '../../lib', __FILE__
+  require 'pry'
+  require 'pry/version'
+end
+
 require 'pry_time'
 
 def a
