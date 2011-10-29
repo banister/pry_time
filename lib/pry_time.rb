@@ -6,6 +6,7 @@ require 'binding_of_caller'
 require "continuation"
 require 'pry'
 require 'pry_time/object_extensions'
+require 'pry_time/session'
 require 'pry_time/config'
 require 'pry_time/commands'
 
@@ -20,29 +21,11 @@ module PryTime
     yield config
   end
 
-  def self.pry_config
-    {
-      :prompt => Pry::DEFAULT_PROMPT.map do |p|
-        proc { |*args| "<Frame: #{PryTime.data[:binding_index]}> #{p.call(*args)}" }
-      end
-    }
-  end
-
-  def self.start_session
-    PryTime.data[:binding_index]       = 0
-    instance = PryTime.data[:instance] = Pry.new(pry_config)
-
-    instance.repl(PryTime.data[:exception_bindings].first)
-  end
-
   def self.wrap
     begin
       yield
     rescue Exception => e
-      PryTime.data[:binding_index]     = 0
-      PryTime.data[:current_exception] = e
-
-      start_session
+      PryTime.data[:instance].start_session
     end
   end
 
@@ -51,16 +34,19 @@ module PryTime
   end
 
   def self.get_caller_bindings
-    PryTime.data[:exception_bindings] = []
+    exception_bindings = []
+
     i = 4
     loop do
       begin
-        PryTime.data[:exception_bindings] <<  yield(i)
+        exception_bindings <<  yield(i)
       rescue
         break
       end
       i += 1
     end
+
+    exception_bindings
   end
 
 end
