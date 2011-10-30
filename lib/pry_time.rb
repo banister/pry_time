@@ -8,7 +8,6 @@ require 'pry'
 require 'pry_time/object_extensions'
 require 'pry_time/session'
 require 'pry_time/config'
-require 'pry_time/commands'
 
 module PryTime
   class << self
@@ -25,6 +24,7 @@ module PryTime
     begin
       yield
     rescue Exception => e
+      PryTime.data[:instance].session_type = :top_level
       PryTime.data[:instance].start_session
     end
   end
@@ -51,4 +51,3 @@ module PryTime
 
 end
 
-Pry.commands.import PryTime::PryTimeCommands

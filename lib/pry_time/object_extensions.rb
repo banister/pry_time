@@ -2,6 +2,7 @@ class Exception
   NoContinuation = Class.new(StandardError)
 
   attr_accessor :continuation
+  attr_accessor :exception_bindings
 
   def continue
     raise NoContinuation unless continuation.respond_to?(:call)
@@ -18,19 +19,21 @@ class Object
 
     ex = exception.exception(string)
     ex.set_backtrace(array)
+    ex.exception_bindings = PryTime.get_caller_bindings { |i| binding.of_caller(i) }
 
-    exception_bindings = PryTime.get_caller_bindings { |i| binding.of_caller(i) }
-    session            = PryTime.data[:instance] = PryTime::Session.new(caller, exception_bindings, PryTime.config)
+    PryTime.data[:instance] = PryTime::Session.new(ex, PryTime.config, :raise)
 
-    # session.start_session if session.should_capture_exception?
-    # if PryTime.should_capture_exception?
+    ret_val = nil
+    if PryTime.data[:instance].should_capture_exception?
+      ret_val = PryTime.data[:instance].start_session
+    end
 
-    # end
 
-
-    callcc do |cc|
-      ex.continuation = cc
-      super(ex)
+    if ret_val != :__continue__
+      callcc do |cc|
+        ex.continuation = cc
+        super(ex)
+      end
     end
   end
 end
