@@ -12,6 +12,8 @@ end
 
 class Object
   def raise(exception = RuntimeError, string = nil, array = caller)
+    return super if PryTime.data[:in_session]
+    
     if exception.is_a?(String)
       string = exception
       exception = RuntimeError
