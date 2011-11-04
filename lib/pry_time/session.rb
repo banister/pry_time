@@ -25,7 +25,7 @@ module PryTime
     def pry_config
       {
         :prompt => Pry::DEFAULT_PROMPT.map do |p|
-          proc { |*args| "<Frame: #{binding_index}> #{p.call(*args)}" }
+          proc { |*args| "<Frame: #{binding_index}/#{exception_bindings.size - 1}> #{p.call(*args)}" }
         end,
 
         :commands => Pry::CommandSet.new do
@@ -49,19 +49,32 @@ module PryTime
     end
 
     def should_capture_exception?
-       config.from_class.include?(exception_bindings.first.eval("self.class")) ||
+      config.all_exceptions ||
+        config.from_class.include?(exception_bindings.first.eval("self.class")) ||
        config.from_method.include?(exception_bindings.first.eval("__method__")) ||
         config.exception_type.any? { |v| v === current_exception } ||
         exec_predicate_proc
     end
 
     def binding_index=(index)
-      @binding_index = index
-      pry_instance.binding_stack[-1] = exception_bindings[binding_index]
+      if index > exception_bindings.size - 1
+        pry_instance.output.puts "Warning: At top of stack, cannot go further!"
+      elsif index < 0
+        pry_instance.output.puts "Warning: At bottom of stack, cannot go further!"
+      else
+        @binding_index = index
+        pry_instance.binding_stack[-1] = exception_bindings[binding_index]
+        pry_instance.run_command "whereami"
+      end
     end
 
     def start_session
-      pry_instance.repl exception_bindings[binding_index]
+      PryTime.data[:in_session]   = true
+      begin
+        pry_instance.repl exception_bindings[binding_index]
+      ensure
+        PryTime.data[:in_session] = false
+      end
     end
   end
 end

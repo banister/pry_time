@@ -1,6 +1,7 @@
 module PryTime
   class Config
     attr_accessor :predicate_proc
+    attr_accessor :all_exceptions
 
     def self.option_builder(option_name)
       define_method(option_name) do
