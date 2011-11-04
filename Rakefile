@@ -35,6 +35,11 @@ def apply_spec_defaults(s)
   s.test_files = `git ls-files -- test/*`.split("\n")
 end
 
+desc "start a pry session with the library loaded"
+task :pry do
+  sh "pry -I./lib/ -r./lib/pry_time.rb"
+end
+
 desc "Run tests"
 task :test do
   sh "bacon -Itest -rubygems test.rb -q"
