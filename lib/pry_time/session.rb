@@ -36,10 +36,23 @@ module PryTime
     end
     private :pry_config
 
+    def exec_predicate_proc
+      cur = self
+      @context ||= Object.new.tap do |obj|
+        class << obj; self; end.class_eval do
+          define_method(:exception) { cur.current_exception }
+          define_method(:bindings) { cur.exception_bindings }
+        end
+      end
+
+      @context.instance_eval(&config.predicate_proc) if config.predicate_proc
+    end
+
     def should_capture_exception?
        config.from_class.include?(exception_bindings.first.eval("self.class")) ||
        config.from_method.include?(exception_bindings.first.eval("__method__")) ||
-        config.exception_type.any? { |v| v === current_exception }
+        config.exception_type.any? { |v| v === current_exception } ||
+        exec_predicate_proc
     end
 
     def binding_index=(index)

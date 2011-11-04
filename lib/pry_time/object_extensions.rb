@@ -28,7 +28,6 @@ class Object
       ret_val = PryTime.data[:instance].start_session
     end
 
-
     if ret_val != :__continue__
       callcc do |cc|
         ex.continuation = cc

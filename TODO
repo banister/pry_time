@@ -1,0 +1,8 @@
+30/10/2011
+
+* continue in case of normal exceptions is just quitting out of pry session and allowing
+'raise' method to finish without raising the exception (i.e calling super)
+* continue in case of top level exceptions is calling Exception#continue
+* need to write: Binding#frame_type, and Binding#frame_count
+* way to specify whether exception is captured should be via a proc that can use a DSL-like language that is instance_eval'd: i.e proc { caller(0).frame_type == "method" && caller(0).method_name == "hello" && caller(0).context = BingClass }
+* above will determine output of Pry::Session#should_capture_exception?
