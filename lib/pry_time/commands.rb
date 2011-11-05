@@ -25,7 +25,7 @@ PryTime::PryTimeCommands = Pry::CommandSet.new do
     output.puts PryTime.data[:instance].current_exception.backtrace
   end
 
-  command "continue", "Continue the program." do
+  command "continue", "Continue the program from the point of the exception." do
     case PryTime.data[:instance].session_type
     when :raise
       _pry_.run_command "exit-all :__continue__"

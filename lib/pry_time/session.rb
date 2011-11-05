@@ -38,14 +38,14 @@ module PryTime
 
     def exec_predicate_proc
       cur = self
-      @context ||= Object.new.tap do |obj|
+      context = Object.new.tap do |obj|
         class << obj; self; end.class_eval do
           define_method(:exception) { cur.current_exception }
           define_method(:bindings) { cur.exception_bindings }
         end
       end
 
-      @context.instance_eval(&config.predicate_proc) if config.predicate_proc
+      context.instance_eval(&config.predicate_proc) if config.predicate_proc
     end
 
     def should_capture_exception?
