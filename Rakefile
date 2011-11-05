@@ -25,8 +25,8 @@ def apply_spec_defaults(s)
   s.email = 'jrmair@gmail.com'
   s.description = s.summary
   s.require_path = 'lib'
-  s.add_dependency("binding_of_caller","~>0.4.1")
-  s.add_dependency("pry","~>0.9.6.2")
+  s.add_dependency("binding_of_caller","~>0.5.0")
+  s.add_dependency("pry","~>0.9.7.4")
   s.add_development_dependency("bacon","~>1.1.0")
   s.homepage = "http://github.com/banister/#{PROJECT_NAME}"
   s.executables = ["pry_time"]
