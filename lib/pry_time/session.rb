@@ -22,10 +22,14 @@ module PryTime
       current_exception.exception_bindings
     end
 
+    def current_frame_type
+      exception_bindings[binding_index].frame_type
+    end
+
     def pry_config
       {
         :prompt => Pry::DEFAULT_PROMPT.map do |p|
-          proc { |*args| "<Frame: #{binding_index}/#{exception_bindings.size - 1}> #{p.call(*args)}" }
+          proc { |*args| "<Frame: #{binding_index}/#{exception_bindings.size - 1} (#{current_frame_type})> #{p.call(*args)}" }
         end,
 
         :commands => Pry::CommandSet.new do
