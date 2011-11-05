@@ -52,6 +52,11 @@ task :reinstall do
   sh "gem install #{direc}/pkg/pry_time-#{PryTime::VERSION}.gem"
 end
 
+desc "Show version"
+task :version do
+  puts "pry_time version: #{PryTime::VERSION}"
+end
+
 desc "Run example"
 task :example do
   sh "ruby -I#{direc}/lib/ #{direc}/bin/pry_time #{direc}/examples/pry_die.rb"
