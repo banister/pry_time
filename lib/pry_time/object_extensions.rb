@@ -13,7 +13,7 @@ end
 class Object
   def raise(exception = RuntimeError, string = nil, array = caller)
     return super if PryTime.data[:in_session]
-    
+
     if exception.is_a?(String)
       string = exception
       exception = RuntimeError
@@ -21,7 +21,7 @@ class Object
 
     ex = exception.exception(string)
     ex.set_backtrace(array)
-    ex.exception_bindings = PryTime.get_caller_bindings { |i| binding.of_caller(i) }
+    ex.exception_bindings = binding.callers.tap(&:shift)
 
     PryTime.data[:instance] = PryTime::Session.new(ex, PryTime.config, :raise)
 

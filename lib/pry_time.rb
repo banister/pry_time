@@ -33,21 +33,5 @@ module PryTime
     Thread.current[:__pry_time_hash__] ||= {}
   end
 
-  def self.get_caller_bindings
-    exception_bindings = []
-
-    i = 4
-    loop do
-      begin
-        exception_bindings <<  yield(i)
-      rescue
-        break
-      end
-      i += 1
-    end
-
-    exception_bindings
-  end
-
 end
 
